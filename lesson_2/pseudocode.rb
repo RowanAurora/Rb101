@@ -153,36 +153,22 @@ END
 
 =end
 
-=begin def fan(arr_1, arr_2)
-  arr_3 = []
-  count = 0
-   
-until count == arr_1.length || arr_2.length
-  arr_3 = arr_3 << arr_1[count]
-  arr_3 = arr_3 << arr_2[count]
-  count += 1
-end
-arr_3
-end
-
-puts fan([1, 2, 3], [5, 6, 7])
-=end
 
 def fan(arr_1, arr_2)
 arr_3 = arr_1.zip(arr_2)
 arr_3.flatten!
 end
 
-p fan([1, 2, 3], [2, 3, 4])
 
 def fan(arr_1, arr_2)
-count = 0
-  until count = arr_1.length
-  arr_3 = arr_3 + arr_1.select{|x| x[count]}
-  arr_3 = arr_3 + arr_2.select{|x| x[count]}
-  count += 1
-end 
-arr_3
+  count = 0
+  arr_3 = []
+    until count == arr_1.length
+    arr_3 << arr_1[count]
+    arr_3 << arr_2[count]
+    count += 1
+  end 
+  arr_3
 end
 
-p fan([1, 2, 3], [2, 3, 4])
+
