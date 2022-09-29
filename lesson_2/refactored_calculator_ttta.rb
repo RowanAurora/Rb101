@@ -1,7 +1,7 @@
-#ask for two numbers
-#ask for operation to perform
-#perform the operation on the numbers
-#out put the result.
+# ask for two numbers
+# ask for operation to perform
+# perform the operation on the numbers
+# out put the result.
 
 # answer = Kernel.gets().chomp()
 # Kernal.puts(answer)
@@ -35,7 +35,7 @@ loop do
 
   if name.empty?()
     prompt("Make sure to use a valid name.")
-  else 
+  else
     break
   end
 end
@@ -43,28 +43,28 @@ end
 prompt("Hi #{name}!")
 
 loop do
-  number_1 = "" 
+  number1 = ""
   loop do
     prompt("Whats the first number?")
-  number_1 = Kernel.gets().chomp()
+    number1 = Kernel.gets().chomp()
 
-  if valid_number?(number_1)
-    break
-  else 
-    prompt("Hmm that doesn't look like a valid number")
-  end
+    if valid_number?(number1)
+      break
+    else
+      prompt("Hmm that doesn't look like a valid number")
+    end
   end
 
-  number_2 = ""
-  loop do 
-  prompt("Whats the second number?")
-  number_2 = Kernel.gets().chomp()
+  number2 = ""
+  loop do
+    prompt("Whats the second number?")
+    number2 = Kernel.gets().chomp()
 
-  if valid_number?(number_2)
-    break
-  else 
-    prompt("Hmm that doesn't look like a valid number")
-  end
+    if valid_number?(number2)
+      break
+    else
+      prompt("Hmm that doesn't look like a valid number")
+    end
   end
   operator_prompt = <<-MSG
     What operation would you like?
@@ -76,7 +76,7 @@ loop do
 
   prompt(operator_prompt)
 
-  operator =''
+  operator = ''
   loop do
     operator = Kernel.gets().chomp()
 
@@ -91,16 +91,14 @@ loop do
 
   result = case operator
            when '1'
-            number_1.to_i() + number_2.to_i()
+             number1.to_i() + number2.to_i()
            when '2'
-            number_1.to_i() - number_2.to_i()
+             number1.to_i() - number2.to_i()
            when '3'
-            number_1.to_i() * number_2.to_i()
+             number1.to_i() * number2.to_i()
            when '4'
-            number_1.to_f() / number_2.to_f()
-  end
-          
-        
+             number1.to_f() / number2.to_f()
+           end
 
   prompt("The result is #{result}.")
 
@@ -108,6 +106,5 @@ loop do
   answer = Kernel.gets().chomp()
   break unless answer.downcase().start_with?('y')
 end
-
 
 prompt('Thank you for using the calculator.')
