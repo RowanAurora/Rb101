@@ -1,64 +1,71 @@
+LANGUAGE = 'en'
+
 require 'yaml'
-WORDS = YAML.load_file('mort_text.yml')
+MESSAGES = YAML.load_file('mort_text.yml')
 
 def number?(num)
   num.to_i.to_s == num || num.to_f.to_s == num
 end
 
-def flt(input)
-  input.to_f
+def messages(message, lang='en')
+  MESSAGES[lang][message]
 end
 
-loan_amount = ''
-monthly_payment = ''
-apr = ''
-monthly_interest = ''
-duration_months = ''
+def prompt(key)
+  message = messages(key, LANGUAGE)
+  puts "  #{message}"
+end
 
-puts WORDS['welcome']
+prompt('welcome')
+puts " "
 
 loop do
+  loan_amount = ''
   loop do
-    puts WORDS['amount']
-    loan_amount = gets.chomp
+    prompt('amount')
+    loan_amount = gets.chomp.tr(" ", "")
     if number?(loan_amount)
       break
     else
-      puts WORDS['valid']
+      prompt('valid')
     end
   end
 
+  monthly_interest = ''
   loop do
-    puts WORDS['annual']
-    apr = gets.chomp
+    prompt('annual')
+    apr = gets.chomp.tr(" %", "")
     if number?(apr)
       apr = (apr.to_f * 0.01)
       monthly_interest = (apr.to_f / 12)
       break
     else
-      puts WORDS['valid']
+      prompt('valid')
     end
   end
 
+  duration_months = ''
   loop do
-    puts WORDS['duration']
-    duration = gets.chomp
+    prompt('duration')
+    duration = gets.chomp.tr(" ", "")
     if number?(duration)
       duration_months = (duration.to_f * 12)
       break
     else
-      puts WORDS['valid']
+      prompt('valid')
     end
   end
 
   monthly_payment = loan_amount.to_f * (monthly_interest.to_f / (1 - (1 +
      monthly_interest.to_f)**(-duration_months.to_f)))
 
-  puts "Your monthly payment is #{monthly_payment.to_i}."
+  puts "Your monthly payment is $#{format('%.2f', monthly_payment)}"
 
-  puts WORDS['again']
+  prompt('again')
   again = gets.chomp
   break unless again.downcase.start_with?('y')
 end
 
-puts WORDS['bye']
+prompt('bye')
+
+# input the format method after looking at the solution. very cool.

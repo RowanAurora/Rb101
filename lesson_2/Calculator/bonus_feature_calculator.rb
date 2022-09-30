@@ -13,24 +13,24 @@ def prompt(key)
 end
 
 def valid_number?(num)
-  num == "0" || num.to_i != 0 
+  num == "0" || num.to_i != 0
 end
 
 def number?(flt)
   flt.to_i.to_s == flt || flt.to_f.to_s == flt
-end  
+end
 
 def operation_to_messege(op)
- operation_name = case op
-                  when '1'
-                    'Adding'
-                  when '2'
-                    'Subtracting'
-                  when '3'
-                    'Multiplying'
-                  when '4'
-                    'Dividing'
-                  end
+  operation_name = case op
+                   when '1'
+                     'Adding'
+                   when '2'
+                     'Subtracting'
+                   when '3'
+                     'Multiplying'
+                   when '4'
+                     'Dividing'
+                   end
   operation_name
 end
 
@@ -74,7 +74,7 @@ loop do
       prompt('not_valid')
     end
   end
-  
+
   operator_prompt = <<-MSG
     What operation would you like?
     1) add
@@ -118,5 +118,5 @@ end
 
 prompt('bye')
 
-#Interesting edge cases with string interpolation.
+# Interesting edge cases with string interpolation.
 # Not yet sure how to use that with yaml file
