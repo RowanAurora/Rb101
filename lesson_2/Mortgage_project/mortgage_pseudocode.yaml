@@ -1,0 +1,37 @@
+Given loan amount, APR and loan duration, find the monthly interest rate, 
+the loan duration and calculate the monthly payment 
+
+User input loan amount
+  validate
+User unput APR
+  validate
+User input Loan duration
+  validate
+monthly interest = apr / 12
+loan duration(months) = Loan duration(years) x 12
+monthly payment = loan amount (monthly interest rate / 1- (monthly interest rate)**Loan duration months)
+output monthly payment
+ask if again?
+
+START
+ 
+GET loan_amount
+  valid? 
+
+GET apr
+  valid?
+
+GET loan_duration(years)
+  valid?
+
+SET monthly_interest = apr / 12
+
+SET loan_duration_months = loan_duration_years * 12
+
+SET monthly_payment = loan_amount (monthly_interest / 1- (monthly_interest)**Loan_duration_months)
+
+PRINT monthly_payment 
+
+GET again?
+  if (y) repeat from START
+  else exit

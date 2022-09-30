@@ -1,0 +1,7 @@
+welcome: "  Let's calculate your mortgage!"
+amount: "  Input loan amount."
+annual: " Input APR %."
+duration: "  Input loan duration(years)."
+valid: "  Doesn't seem like a valid input, try again"
+again: "  Would you like to calculate again? (Y) "
+bye: "  Thanks for using our mortgage calculator. Good bye"
