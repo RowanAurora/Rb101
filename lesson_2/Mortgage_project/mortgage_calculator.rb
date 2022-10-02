@@ -1,10 +1,11 @@
+require 'yaml'
+
 LANGUAGE = 'en'
 
-require 'yaml'
 MESSAGES = YAML.load_file('mort_text.yml')
 
 def number?(num)
-  num.to_i.to_s == num || num.to_f.to_s == num
+  (num.to_i.to_s == num || num.to_f.to_s == num) 
 end
 
 def messages(message, lang='en')
@@ -35,7 +36,7 @@ loop do
   loop do
     prompt('annual')
     apr = gets.chomp.tr(" %", "")
-    if number?(apr)
+    if number?(apr) && apr.to_f.to_s != '0.0'
       apr = (apr.to_f * 0.01)
       monthly_interest = (apr.to_f / 12)
       break
@@ -68,4 +69,3 @@ end
 
 prompt('bye')
 
-# input the format method after looking at the solution. very cool.
