@@ -118,7 +118,7 @@ loop do
   end
 
   prompt("again")
-  answer = Kernel.gets().chomp()
+  answer = Kernel.gets.chomp
 
   clr = ''
   if answer.downcase.start_with?('y')
@@ -128,7 +128,7 @@ loop do
 
   if clr.downcase.start_with?('y') then $stdout.clear_screen end
 
-  break unless answer.downcase().start_with?('y')
+  break unless answer.downcase.start_with?('y')
 end
 
 prompt("bye")
