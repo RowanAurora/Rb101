@@ -6,7 +6,7 @@ en:
   tie: "It's a tie!"
   big_win: "You are the Grand Winner!"
   big_lose: "You lost big time!"
-  again: "Do you want to play again?"
-  clear: "Would you like to clear the screen?"
+  again: "Do you want to play again?(Y)"
+  clear: "Would you like to clear the screen?(Y)"
   bye: "Thank you for playing. Goodbye!"
-  
+  huzzah: "Huzzah! Again!"

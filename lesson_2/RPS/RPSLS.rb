@@ -42,11 +42,28 @@ def display_results(player, computer)
   end
 end
 
+def display_results_total(player_count, computer_count)
+  if player_count == 3
+    prompt("big_win")
+  elsif computer_count == 3
+    prompt("big_lose")
+  end
+end
+
+answer = ''
+player_total = 0
+computer_total = 0
+
 prompt('welcome')
 puts " "
 loop do
   player_count = 0
   computer_count = 0
+  if answer.downcase.start_with?('y') then prompt('huzzah') end
+
+  if player_total != 0 || computer_total != 0
+    puts "Player games: #{player_total} Computer games: #{computer_total}"
+  end
 
   loop do
     choice = ''
@@ -86,13 +103,15 @@ loop do
 
     display_results(choice, computer_choice)
 
-    if player_count == 3
-      prompt("big_win")
-    elsif computer_count == 3
-      prompt("big_lose")
-    end
+    display_results_total(player_count, computer_count)
 
     puts "You: #{player_count}, Computer: #{computer_count}"
+
+    if player_count == 3
+      player_total += 1
+    elsif computer_count == 3
+      computer_total += 1
+    end
 
     if player_count == 3 || computer_count == 3 then break
     end
