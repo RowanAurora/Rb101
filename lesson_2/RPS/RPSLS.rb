@@ -11,6 +11,8 @@ VALID_CHOICES_2 = %w(r p sc l sp)
 
 INSTRUCTIONS = %w(Rock(r) Paper(p) Scissors(sc) Lizard(l) Spock(sp))
 
+VICTORIES = 3
+
 OUTCOMES = {
   spock: ['scissors', 'rock'],
   scissors: ['paper', 'lizard'],
@@ -43,11 +45,43 @@ def display_results(player, computer)
 end
 
 def display_results_total(player_count, computer_count)
-  if player_count == 3
+  if player_count == VICTORIES
     prompt("big_win")
-  elsif computer_count == 3
+  elsif computer_count == VICTORIES
     prompt("big_lose")
   end
+end
+
+def scoreboard(count, total)
+if count == VICTORIES
+  total += 1
+else 
+  total
+end
+end
+
+def win_update(chose, other_choice, count)
+  if win?(chose, other_choice)
+    count += 1
+  else
+    count
+  end
+end  
+
+def reformat_choice(choice)
+case choice
+when 'r'
+  choice = 'rock'
+when 'p'
+  choice = 'paper'
+when 'sc'
+  choice = 'scissors'
+when 'sp'
+  choice = 'spock'
+when 'l'
+  choice = 'lizard'
+end
+choice
 end
 
 answer = ''
@@ -71,35 +105,20 @@ loop do
       puts("Choose one: #{INSTRUCTIONS.join(', ')}")
       choice = Kernel.gets.chomp.downcase.strip
 
-      case choice
-      when 'r'
-        choice = 'rock'
-      when 'p'
-        choice = 'paper'
-      when 'sc'
-        choice = 'scissors'
-      when 'sp'
-        choice = 'spock'
-      when 'l'
-        choice = 'lizard'
-      end
-
       if VALID_CHOICES.include?(choice) || VALID_CHOICES_2.include?(choice)
         break
       else
         prompt("valid")
       end
     end
-
+    choice = reformat_choice(choice)
     computer_choice = VALID_CHOICES.sample
 
     puts "You chose: #{choice} Computer chose: #{computer_choice}"
 
-    if win?(choice, computer_choice)
-      player_count += 1
-    elsif win?(computer_choice, choice)
-      computer_count += 1
-    end
+   player_count = win_update(choice, computer_choice, player_count)
+   computer_count = win_update(computer_choice, choice, computer_count)
+    
 
     display_results(choice, computer_choice)
 
@@ -107,13 +126,10 @@ loop do
 
     puts "You: #{player_count}, Computer: #{computer_count}"
 
-    if player_count == 3
-      player_total += 1
-    elsif computer_count == 3
-      computer_total += 1
-    end
-
-    if player_count == 3 || computer_count == 3 then break
+    player_total = scoreboard(player_count, player_total)
+    computer_total = scoreboard(computer_count, computer_total)
+  
+    if player_count == VICTORIES || computer_count == VICTORIES then break
     end
   end
 
