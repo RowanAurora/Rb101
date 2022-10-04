@@ -126,7 +126,7 @@ loop do
     clr = gets.chomp
   end
 
-  if clr.downcase.start_with?('y') then $stdout.clear_screen end
+  if clr.downcase.start_with?('y') then system("clear") end
 
   break unless answer.downcase.start_with?('y')
 end
