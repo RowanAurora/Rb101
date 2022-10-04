@@ -53,11 +53,11 @@ def display_results_total(player_count, computer_count)
 end
 
 def scoreboard(count, total)
-if count == VICTORIES
-  total += 1
-else 
-  total
-end
+  if count == VICTORIES
+    total += 1
+  else
+    total
+  end
 end
 
 def win_update(chose, other_choice, count)
@@ -66,22 +66,38 @@ def win_update(chose, other_choice, count)
   else
     count
   end
-end  
+end
 
 def reformat_choice(choice)
-case choice
-when 'r'
-  choice = 'rock'
-when 'p'
-  choice = 'paper'
-when 'sc'
-  choice = 'scissors'
-when 'sp'
-  choice = 'spock'
-when 'l'
-  choice = 'lizard'
+  case choice
+  when 'r'
+    choice = 'rock'
+  when 'p'
+    choice = 'paper'
+  when 'sc'
+    choice = 'scissors'
+  when 'sp'
+    choice = 'spock'
+  when 'l'
+    choice = 'lizard'
+  end
+  choice
 end
-choice
+
+choice = ''
+
+def input_loop(choice)
+  loop do
+    puts("Choose one: #{INSTRUCTIONS.join(', ')}")
+    choice = Kernel.gets.chomp.downcase.strip
+
+    if VALID_CHOICES.include?(choice) || VALID_CHOICES_2.include?(choice)
+      break
+    else
+      prompt("valid")
+    end
+  end
+  choice
 end
 
 answer = ''
@@ -100,25 +116,14 @@ loop do
   end
 
   loop do
-    choice = ''
-    loop do
-      puts("Choose one: #{INSTRUCTIONS.join(', ')}")
-      choice = Kernel.gets.chomp.downcase.strip
-
-      if VALID_CHOICES.include?(choice) || VALID_CHOICES_2.include?(choice)
-        break
-      else
-        prompt("valid")
-      end
-    end
+    choice = input_loop(choice)
     choice = reformat_choice(choice)
     computer_choice = VALID_CHOICES.sample
 
     puts "You chose: #{choice} Computer chose: #{computer_choice}"
 
-   player_count = win_update(choice, computer_choice, player_count)
-   computer_count = win_update(computer_choice, choice, computer_count)
-    
+    player_count = win_update(choice, computer_choice, player_count)
+    computer_count = win_update(computer_choice, choice, computer_count)
 
     display_results(choice, computer_choice)
 
@@ -128,7 +133,7 @@ loop do
 
     player_total = scoreboard(player_count, player_total)
     computer_total = scoreboard(computer_count, computer_total)
-  
+
     if player_count == VICTORIES || computer_count == VICTORIES then break
     end
   end
