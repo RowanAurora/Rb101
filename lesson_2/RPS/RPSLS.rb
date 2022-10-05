@@ -54,7 +54,7 @@ end
 
 def scoreboard(count, total)
   if count == VICTORIES
-    total += 1
+    total + 1
   else
     total
   end
@@ -62,7 +62,7 @@ end
 
 def win_update(chose, other_choice, count)
   if win?(chose, other_choice)
-    count += 1
+    count + 1
   else
     count
   end
