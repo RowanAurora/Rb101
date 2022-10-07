@@ -1,5 +1,9 @@
 def is_odd(number)
-  (number).odd?
+  number % 2 == 1
+end
+
+def is_odd?(number)
+  number.remainder(2) == 1
 end
 
 p is_odd(5)
