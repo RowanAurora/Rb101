@@ -1,30 +1,35 @@
 vehicles = [
   'car', 'car', 'truck', 'car', 'SUV', 'truck',
-  'motorcycle', 'motorcycle', 'car', 'truck'
+  'motorcycle', 'motorcycle', 'car', 'truck', 'suv'
 ]
 
-def count_occurences(array)
-  hash = {}
+# def count_occurences(array)
+#   hash = {}
 
-  check = array.uniq
-  count = check.map { |car| array.count(car)}
+#   check = array.uniq
+#   count = check.map { |car| array.count(car)}
   
-  hash = Hash[check.zip(count)]
-  hash.each { |k, v| puts "#{k} => #{v}"}
-end
+#   hash = Hash[check.zip(count)]
+#   hash.each { |k, v| puts "#{k} => #{v}"}
+# end
 
-# same steps, they didint initiate new variables
 
-puts  count_occurences(vehicles)
 
- def count_occurences(array)
-  occurences = {}
 
-  array.uniq.each do |element|
-    occurences[element] = array.count(element)
+def count_occurrences(array)
+  occurrences = {}
+  array.map(&:downcase!)
+  array.each.uniq.each do |element|
+    occurrences[element] = array.count(element)
   end
 
-  occurences.each do |element, count| 
-    puts " #{element} => #{count}"
+  if occurrences.include?('suv')
+  occurrences['SUV'] = occurrences.delete('suv')
+  end    
+  
+  occurrences.each do |element, count|
+    puts "#{element} => #{count}"
   end
 end
+
+count_occurrences(vehicles)
