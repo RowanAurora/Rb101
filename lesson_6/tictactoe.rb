@@ -4,6 +4,7 @@ WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
+WIN_NUMBER = 3
 
 def prompt(msg)
   puts "===> #{msg}"
@@ -24,7 +25,7 @@ end
 # rubocop:disable Metrics/AbcSize
 def display_board(brd, player)
   system 'clear'
-  puts "You're an #{PLAYER_MARKER}, #{player} is #{COMPUTER_MARKER}."
+  puts "You're #{PLAYER_MARKER}, #{player} is #{COMPUTER_MARKER}."
   puts ""
   puts "     |     |"
   puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
@@ -97,9 +98,9 @@ end
 
 def detect_winner(brd, player)
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 3
+    if brd.values_at(*line).count(PLAYER_MARKER) == WIN_NUMBER
       return 'Player'
-    elsif brd.values_at(*line).count(COMPUTER_MARKER) == 3
+    elsif brd.values_at(*line).count(COMPUTER_MARKER) == WIN_NUMBER
       return player.to_s
     end
   end
@@ -162,12 +163,35 @@ player_match_wins = 0
 computer_match_wins = 0
 player_2_match_wins = 0
 
+puts " _   _        _               _"
+puts "| | (_)      | |             | |"
+puts "| |_ _  ___  | |_ __ _  ___  | |_ ___   ___"
+puts "| __| |/ __| | __/ _  |/ __| | __/ _ \\ / _ \\ "
+puts "| | | | (__  | || (_| | (__  | || (_) |  __/"
+puts "|_| |_|\\___| |_| \\__,_|\\___| |_| \\___/ \\___| "
+
+prompt "Get Three of Your marker in a line before your opponent to win!"
+puts ""
+puts "     |     |"
+puts "  1  |  2  |  3"
+puts "     |     |"
+puts "-----+-----+-----"
+puts "     |     |"
+puts "  4  |  5  |  6"
+puts "     |     |"
+puts "-----+-----+-----"
+puts "     |     |"
+puts "  7  |  8  |  9"
+puts "     |     |"
+puts ""
+
 loop do
   prompt 'PC(1) or 2 player(2)'
+  prompt 'Type 1 to face computer. Type 2 to play against a friend.'
   answer = gets.chomp
   game_type(answer, player2)
   break if answer == '1' || answer == '2'
-  prompt "Choose a game type"
+  prompt "Error - Choose a game type by typing 1 or 2"
 end
 
 loop do
@@ -204,19 +228,19 @@ loop do
     player_2_wins += 1
   end
 
-  if player_wins == 3
+  if player_wins == WIN_NUMBER
     prompt "You're the grand winner!"
     player_match_wins += 1
     player_wins = 0
     computer_wins = 0
     player_2_wins = 0
-  elsif computer_wins == 3
+  elsif computer_wins == WIN_NUMBER
     prompt "Child, that computer smashed you."
     computer_match_wins += 1
     player_wins = 0
     computer_wins = 0
     player_2_wins = 0
-  elsif player_2_wins == 3
+  elsif player_2_wins == WIN_NUMBER
     prompt "Player 2 wins Big!"
     player_2_match_wins += 1
     player_wins = 0
