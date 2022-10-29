@@ -1,14 +1,14 @@
 require 'pry'
 
-WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
-                [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
-                [[1, 5, 9], [3, 5, 7]]
+WINNING_LINES = [['1', '2', '3'], ['4', '5', '6'], ['7', '8', '9']] +
+                [['1', '4', '7'], ['2', '5', '8'], ['3', '6', '9']] +
+                [['1', '5', '9'], ['3', '5', '7']]
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
 WIN_NUMBER = 3
 SECOND_PLAYER = 'Player_2'
-VALID_MOVES = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+VALID_MOVES = %w(1 2 3 4 5 6 7 8 9)
 
 def prompt(msg)
   puts "===> #{msg}"
@@ -32,15 +32,15 @@ def display_board(brd, player)
   puts "You're #{PLAYER_MARKER}, #{player} is #{COMPUTER_MARKER}."
   puts ""
   puts "     |     |"
-  puts "  #{brd[1]}  |  #{brd[2]}  |  #{brd[3]}"
+  puts "  #{brd['1']}  |  #{brd['2']}  |  #{brd['3']}"
   puts "     |     |"
   puts "-----+-----+-----"
   puts "     |     |"
-  puts "  #{brd[4]}  |  #{brd[5]}  |  #{brd[6]}"
+  puts "  #{brd['4']}  |  #{brd['5']}  |  #{brd['6']}"
   puts "     |     |"
   puts "-----+-----+-----"
   puts "     |     |"
-  puts "  #{brd[7]}  |  #{brd[8]}  |  #{brd[9]}"
+  puts "  #{brd['7']}  |  #{brd['8']}  |  #{brd['9']}"
   puts "     |     |"
   puts ""
 end
@@ -48,12 +48,8 @@ end
 
 def initialize_board
   new_board = {}
-  (1..9).each { |num| new_board[num] = INITIAL_MARKER }
+  ('1'..'9').each { |num| new_board[num] = INITIAL_MARKER }
   new_board
-end
-
-def valid_input(variable)
-  variable.class == Integer 
 end
 
 def empty_squares(brd)
@@ -65,8 +61,7 @@ def player_places_piece(brd)
   loop do
     prompt "choose a square (#{joinor(empty_squares(brd))}):"
     square = gets.chomp
-    VALID_MOVES.include?(square)
-    break if empty_squares(brd).include?(square) && valid_input(square)
+    break if empty_squares(brd).include?(square) && VALID_MOVES.include?(square)
     prompt "Sorry, thats not a valid choice."
   end
   brd[square] = PLAYER_MARKER
@@ -76,8 +71,8 @@ def player_2_places_piece(brd)
   square = ''
   loop do
     prompt "choose a square (#{joinor(empty_squares(brd))}):"
-    square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square) && valid_input(square)
+    square = gets.chomp
+    break if empty_squares(brd).include?(square) && VALID_MOVES.include?(square)
     prompt "Sorry, thats not a valid choice."
   end
   brd[square] = COMPUTER_MARKER
@@ -122,8 +117,8 @@ def computer_strategy(line, brd)
     brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   elsif brd.values_at(*line).count(PLAYER_MARKER) == 2
     brd.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-  elsif brd[5] == INITIAL_MARKER
-    5
+  elsif brd['5'] == INITIAL_MARKER
+    '5'
   else
     nil
   end
@@ -154,12 +149,13 @@ def place_piece_2!(board, current_player)
   end
 end
 
-def game_type(answer, player2)
+def game_type(answer)
   if answer == '1'
-    return 'Computer'
+    type = 'Computer'
   elsif answer == '2'
-    return 'Player_2'
+    type = 'Player_2'
   end
+  type
 end
 
 def player_two_type
@@ -168,54 +164,67 @@ def player_two_type
     prompt 'PC(1) or 2 player(2)'
     prompt 'Type 1 to face computer. Type 2 to play against a friend.'
     answer = gets.chomp
-    player2 = game_type(answer, player2)
+    player2 = game_type(answer)
     break if answer == '1' || answer == '2'
     prompt "Error - Choose a game type by typing 1 or 2"
   end
   player2
 end
 
+def score_wipe(score_card)
+  score_card[:scores][:player_wins] = 0
+  score_card[:scores][:computer_wins] = 0
+  score_card[:scores][:player_2_wins] = 0
+end
+
+def game_score_update(score_card, player2, board)
+  if detect_winner(board, player2) == "Player"
+    score_card[:scores][:player_wins] += 1
+  elsif detect_winner(board, player2) == "Computer"
+    score_card[:scores][:computer_wins] += 1
+  elsif detect_winner(board, player2) == "Player_2"
+    score_card[:scores][:player2_wins] += 1
+  end
+end
+
 def update_score_card(score_card)
   if score_card[:scores][:player_wins] == WIN_NUMBER
     prompt "You're the grand winner!"
     score_card[:match_score][:player_match_wins] += 1
-    score_card[:scores][:player_wins] = 0
-    score_card[:scores][:computer_wins] = 0
-    score_card[:scores][:player_2_wins] = 0
   elsif score_card[:scores][:computer_wins] == WIN_NUMBER
     prompt "Child, that computer smashed you."
     score_card[:match_score][:computer_match_wins] += 1
-    score_card[:scores][:player_wins] = 0
-    score_card[:scores][:computer_wins] = 0
-    score_card[:scores][:player_2_wins] = 0
   elsif score_card[:scores][:player_2_wins] == WIN_NUMBER
     prompt "Player 2 wins Big!"
-    player_2_match_wins += 1
-    score_card[:scores][:player_wins] = 0
-    score_card[:scores][:computer_wins] = 0
-    score_card[:scores][:player_2_wins] = 0
+    score_card[:match_score][:player_2_match_wins] += 1
   end
 end
 
 def game_win(score_card, player2)
   prompt "Player wins:#{score_card[:scores][:player_wins]}"
   if player2 == 'Computer'
-    prompt "Computer wins: #{score_card[:scores][:computer_wins]}"
+    prompt "Computer wins:#{score_card[:scores][:computer_wins]}"
   else
-    prompt "Player 2 wins: #{score_card[:scores][:player2_wins]}"
+    prompt "Player 2 wins:#{score_card[:scores][:player2_wins]}"
   end
 end
 
+# rubocop:disable Metrics/AbcSize
 def match_wins(score_card, player2)
-  if score_card[:match_score].any? { |k, v| v > 0}
-    prompt "Player Match wins: #{score_card[:match_score][:player_match_wins]}"
+  if score_card[:match_score].any? { |_, v| v > 0 }
+    prompt "Player Match wins:" +
+           score_card[:match_score][:player_match_wins].to_s
+    score_wipe(score_card)
     if player2 == 'Computer'
-      prompt "Computer match wins: #{score_card[:match_score][:computer_match_wins]}"
+      prompt "Computer Match wins:" +
+             score_card[:match_score][:computer_match_wins].to_s
     else
-      prompt "Player 2 match wins: #{score_card[:match_score][:player_2_match_wins]}"
+      prompt "Player 2 Match wins:" +
+             score_card[:match_score][:player_2_match_wins].to_s
     end
   end
 end
+# rubocop:enable Metrics/AbcSize
 
 def opening_display
   puts " _   _        _               _"
@@ -226,6 +235,9 @@ def opening_display
   puts "|_| |_|\\___| |_| \\__,_|\\___| |_| \\___/ \\___| "
   prompt "Get Three of Your marker in a line before your opponent to win!"
   prompt "First to 3 wins a match!"
+end
+
+def opening_board_display
   puts ""
   puts "     |     |"
   puts "  1  |  2  |  3"
@@ -241,13 +253,15 @@ def opening_display
   puts ""
 end
 
-
 current_player = 'Player'
-answer = 0
-score_card = {scores: {player_wins: 0, computer_wins: 0, player2_wins: 0},
-match_score: {player_match_wins: 0, computer_match_wins: 0, player_2_match_wins: 0}}
+score_card = { scores:
+                { player_wins: 0, computer_wins: 0, player2_wins: 0 },
+               match_score:
+                { player_match_wins: 0, computer_match_wins: 0,
+                  player_2_match_wins: 0 } }
 
-opening_display()
+opening_display
+opening_board_display
 player2 = player_two_type
 
 loop do
@@ -278,17 +292,11 @@ loop do
     prompt "It's a tie!"
   end
 
-  if detect_winner(board, player2) == "Player"
-    score_card[:scores][:player_wins] += 1
-  elsif detect_winner(board, player2) == "Computer"
-    score_card[:scores][:computer_wins] += 1
-  elsif detect_winner(board, player2) == "Player_2"
-    score_card[:scores][:player2_wins] += 1
-  end
-
-  update_score_card(score_card)
+  game_score_update(score_card, player2, board)
 
   game_win(score_card, player2)
+
+  update_score_card(score_card)
 
   match_wins(score_card, player2)
 
