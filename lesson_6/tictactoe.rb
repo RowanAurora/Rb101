@@ -1,3 +1,5 @@
+require 'pry'
+
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
                 [[1, 5, 9], [3, 5, 7]]
@@ -5,6 +7,8 @@ INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
 WIN_NUMBER = 3
+SECOND_PLAYER = 'Player_2'
+VALID_MOVES = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 def prompt(msg)
   puts "===> #{msg}"
@@ -48,6 +52,10 @@ def initialize_board
   new_board
 end
 
+def valid_input(variable)
+  variable.class == Integer 
+end
+
 def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
@@ -56,8 +64,9 @@ def player_places_piece(brd)
   square = ''
   loop do
     prompt "choose a square (#{joinor(empty_squares(brd))}):"
-    square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square)
+    square = gets.chomp
+    VALID_MOVES.include?(square)
+    break if empty_squares(brd).include?(square) && valid_input(square)
     prompt "Sorry, thats not a valid choice."
   end
   brd[square] = PLAYER_MARKER
@@ -68,7 +77,7 @@ def player_2_places_piece(brd)
   loop do
     prompt "choose a square (#{joinor(empty_squares(brd))}):"
     square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square)
+    break if empty_squares(brd).include?(square) && valid_input(square)
     prompt "Sorry, thats not a valid choice."
   end
   brd[square] = COMPUTER_MARKER
@@ -147,69 +156,118 @@ end
 
 def game_type(answer, player2)
   if answer == '1'
-    player2 << 'Computer'
+    return 'Computer'
   elsif answer == '2'
-    player2 << 'Player_2'
+    return 'Player_2'
   end
 end
 
-computer_wins = 0
-player_wins = 0
-player_2_wins = 0
+def player_two_type
+  player2 = ''
+  loop do
+    prompt 'PC(1) or 2 player(2)'
+    prompt 'Type 1 to face computer. Type 2 to play against a friend.'
+    answer = gets.chomp
+    player2 = game_type(answer, player2)
+    break if answer == '1' || answer == '2'
+    prompt "Error - Choose a game type by typing 1 or 2"
+  end
+  player2
+end
+
+def update_score_card(score_card)
+  if score_card[:scores][:player_wins] == WIN_NUMBER
+    prompt "You're the grand winner!"
+    score_card[:match_score][:player_match_wins] += 1
+    score_card[:scores][:player_wins] = 0
+    score_card[:scores][:computer_wins] = 0
+    score_card[:scores][:player_2_wins] = 0
+  elsif score_card[:scores][:computer_wins] == WIN_NUMBER
+    prompt "Child, that computer smashed you."
+    score_card[:match_score][:computer_match_wins] += 1
+    score_card[:scores][:player_wins] = 0
+    score_card[:scores][:computer_wins] = 0
+    score_card[:scores][:player_2_wins] = 0
+  elsif score_card[:scores][:player_2_wins] == WIN_NUMBER
+    prompt "Player 2 wins Big!"
+    player_2_match_wins += 1
+    score_card[:scores][:player_wins] = 0
+    score_card[:scores][:computer_wins] = 0
+    score_card[:scores][:player_2_wins] = 0
+  end
+end
+
+def game_win(score_card, player2)
+  prompt "Player wins:#{score_card[:scores][:player_wins]}"
+  if player2 == 'Computer'
+    prompt "Computer wins: #{score_card[:scores][:computer_wins]}"
+  else
+    prompt "Player 2 wins: #{score_card[:scores][:player2_wins]}"
+  end
+end
+
+def match_wins(score_card, player2)
+  if score_card[:match_score].any? { |k, v| v > 0}
+    prompt "Player Match wins: #{score_card[:match_score][:player_match_wins]}"
+    if player2 == 'Computer'
+      prompt "Computer match wins: #{score_card[:match_score][:computer_match_wins]}"
+    else
+      prompt "Player 2 match wins: #{score_card[:match_score][:player_2_match_wins]}"
+    end
+  end
+end
+
+def opening_display
+  puts " _   _        _               _"
+  puts "| | (_)      | |             | |"
+  puts "| |_ _  ___  | |_ __ _  ___  | |_ ___   ___"
+  puts "| __| |/ __| | __/ _  |/ __| | __/ _ \\ / _ \\ "
+  puts "| | | | (__  | || (_| | (__  | || (_) |  __/"
+  puts "|_| |_|\\___| |_| \\__,_|\\___| |_| \\___/ \\___| "
+  prompt "Get Three of Your marker in a line before your opponent to win!"
+  prompt "First to 3 wins a match!"
+  puts ""
+  puts "     |     |"
+  puts "  1  |  2  |  3"
+  puts "     |     |"
+  puts "-----+-----+-----"
+  puts "     |     |"
+  puts "  4  |  5  |  6"
+  puts "     |     |"
+  puts "-----+-----+-----"
+  puts "     |     |"
+  puts "  7  |  8  |  9"
+  puts "     |     |"
+  puts ""
+end
+
+
 current_player = 'Player'
 answer = 0
-player2 = ''
-player_match_wins = 0
-computer_match_wins = 0
-player_2_match_wins = 0
+score_card = {scores: {player_wins: 0, computer_wins: 0, player2_wins: 0},
+match_score: {player_match_wins: 0, computer_match_wins: 0, player_2_match_wins: 0}}
 
-puts " _   _        _               _"
-puts "| | (_)      | |             | |"
-puts "| |_ _  ___  | |_ __ _  ___  | |_ ___   ___"
-puts "| __| |/ __| | __/ _  |/ __| | __/ _ \\ / _ \\ "
-puts "| | | | (__  | || (_| | (__  | || (_) |  __/"
-puts "|_| |_|\\___| |_| \\__,_|\\___| |_| \\___/ \\___| "
-
-prompt "Get Three of Your marker in a line before your opponent to win!"
-puts ""
-puts "     |     |"
-puts "  1  |  2  |  3"
-puts "     |     |"
-puts "-----+-----+-----"
-puts "     |     |"
-puts "  4  |  5  |  6"
-puts "     |     |"
-puts "-----+-----+-----"
-puts "     |     |"
-puts "  7  |  8  |  9"
-puts "     |     |"
-puts ""
-
-loop do
-  prompt 'PC(1) or 2 player(2)'
-  prompt 'Type 1 to face computer. Type 2 to play against a friend.'
-  answer = gets.chomp
-  game_type(answer, player2)
-  break if answer == '1' || answer == '2'
-  prompt "Error - Choose a game type by typing 1 or 2"
-end
+opening_display()
+player2 = player_two_type
 
 loop do
   board = initialize_board
   display_board(board, player2)
 
-  if answer == '1'
+  if player2 == 'Computer'
     loop do
       display_board(board, player2)
       place_piece!(board, current_player)
       current_player = alternate_player(current_player)
+      display_board(board, player2)
       break if someone_won?(board, player2) || board_full?(board)
     end
-  elsif answer == '2'
+  elsif player2 == 'Player_2'
     loop do
       display_board(board, player2)
       place_piece_2!(board, current_player)
       current_player = alternate_player_2(current_player)
+      display_board(board, player2)
       break if someone_won?(board, player2) || board_full?(board)
     end
   end
@@ -221,48 +279,18 @@ loop do
   end
 
   if detect_winner(board, player2) == "Player"
-    player_wins += 1
+    score_card[:scores][:player_wins] += 1
   elsif detect_winner(board, player2) == "Computer"
-    computer_wins += 1
+    score_card[:scores][:computer_wins] += 1
   elsif detect_winner(board, player2) == "Player_2"
-    player_2_wins += 1
+    score_card[:scores][:player2_wins] += 1
   end
 
-  if player_wins == WIN_NUMBER
-    prompt "You're the grand winner!"
-    player_match_wins += 1
-    player_wins = 0
-    computer_wins = 0
-    player_2_wins = 0
-  elsif computer_wins == WIN_NUMBER
-    prompt "Child, that computer smashed you."
-    computer_match_wins += 1
-    player_wins = 0
-    computer_wins = 0
-    player_2_wins = 0
-  elsif player_2_wins == WIN_NUMBER
-    prompt "Player 2 wins Big!"
-    player_2_match_wins += 1
-    player_wins = 0
-    computer_wins = 0
-    player_2_wins = 0
-  end
+  update_score_card(score_card)
 
-  prompt "Player wins:#{player_wins}"
-  if player2 == 'Computer'
-    prompt "Computer wins: #{computer_wins}"
-  else
-    prompt "Player 2 wins: #{player_2_wins}"
-  end
+  game_win(score_card, player2)
 
-  if player_2_match_wins > 0 || computer_match_wins > 0 || player_match_wins > 0
-    prompt "Player Match wins: #{player_match_wins}"
-    if player2 == 'Computer'
-      prompt "Computer match wins: #{computer_match_wins}"
-    else
-      prompt "Player 2 match wins: #{player_2_match_wins}"
-    end
-  end
+  match_wins(score_card, player2)
 
   prompt "Play again? (y or n)"
   again = gets.chomp
