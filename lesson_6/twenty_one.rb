@@ -7,6 +7,9 @@ DECK = {
 }
 SUIT = [:spades, :hearts, :diamonds, :clubs]
 ROYAL = 10
+COMPUTER = "Dealer"
+YOU = "Player"
+MAX = 21
 
 def prompt(string)
   puts "==> " + string
@@ -15,7 +18,7 @@ end
 def aces_value(player_hand)
   ace = if player_hand == []
           11
-        elsif player_hand.sum + 11 > 21
+        elsif player_hand.sum + 11 > MAX
           1
         else
           11
@@ -24,9 +27,9 @@ def aces_value(player_hand)
 end
 
 def display_hand_filler(spent_cards, player, player_cards, dealer_cards)
-  if player == "Player"
+  if player == YOU
     player_cards << spent_cards.last
-  elsif player == "Dealer"
+  elsif player == COMPUTER
     dealer_cards << spent_cards.last
   end
 end
@@ -70,41 +73,48 @@ def display_cards(player_hand, player, dealer_hand)
   end
 end
 
-def final_display_cards(player_cards, dealer_cards)
-  prompt "Player Hand: #{hand_format(player_cards)}"
-  prompt "Dealer Hand: #{hand_format(dealer_cards)}"
+def final_display_cards(player_cards, dealer_cards, player_hand, dealer_hand)
+  prompt "Player Hand: #{hand_format(player_cards)} for a total of #{player_hand.sum}"
+  
+  prompt "Dealer Hand: #{hand_format(dealer_cards)} for a total of #{dealer_hand.sum}"
 end
 
 # rubocop:disable Metrics/PerceivedComplexity
 def who_won?(player_hand, dealer_hand)
   if dealer_hand.sum > 21
-    "Player"
+    YOU
   elsif player_hand.sum > 21
-    "Dealer"
-  elsif (player_hand.sum > dealer_hand.sum) && player_hand.sum <= 21
-    "Player"
-  elsif (dealer_hand.sum > player_hand.sum) && dealer_hand.sum <= 21
-    "Dealer"
+    COMPUTER
+  elsif (player_hand.sum > dealer_hand.sum) && player_hand.sum <= MAX
+    YOU
+  elsif (dealer_hand.sum > player_hand.sum) && dealer_hand.sum <= MAX
+    COMPUTER
   end
 end
 # rubocop:enable Metrics/PerceivedComplexity
 
 def score_card_update(player_hand, dealer_hand, score_card)
-  if who_won?(player_hand, dealer_hand) == "Player"
+  if who_won?(player_hand, dealer_hand) == YOU
     score_card[:player_rounds_won] += 1
-  elsif who_won?(player_hand, dealer_hand) == "Dealer"
+  elsif who_won?(player_hand, dealer_hand) == COMPUTER
     score_card[:dealer_rounds_won] += 1
   end
 end
 
 def win_message(player_hand, dealer_hand)
-  if who_won?(player_hand, dealer_hand) == "Player"
+  if who_won?(player_hand, dealer_hand) == YOU
     prompt "You win this one!"
-  elsif  who_won?(player_hand, dealer_hand) == "Dealer"
+  elsif  who_won?(player_hand, dealer_hand) == COMPUTER
     prompt "Dealer Won this hand!"
   else
     prompt "This round is a tie"
   end
+end
+
+def end_sequence
+  prompt "Another round? (Y or N)"
+  again = gets.chomp
+  again.downcase.start_with?('y')
 end
 
 def welcome
@@ -122,11 +132,14 @@ def welcome
 end
 
 def rules
+  puts " "
   prompt "The goal of Twenty-One is to try to get as close to 21 as possible," \
          " without going over."
   prompt "If you go over 21, it's a 'bust' and you lose."
   prompt "Royal cards are worth 10"
   prompt "Ace worth 11 if it doesn't put you over 21, otherwise its worth 1"
+  puts " "
+  prompt '------------------------------------------------------------------------------------'
   puts " "
 end
 
@@ -160,28 +173,30 @@ loop do
   spent_cards = []
   round = true
 
+
+  2.times do 
   dealer_hand << draw_card(spent_cards, dealer_hand)
-  display_hand_filler(spent_cards, "Dealer", player_cards, dealer_cards)
+  display_hand_filler(spent_cards, COMPUTER, player_cards, dealer_cards)
+  end
 
-  dealer_hand << draw_card(spent_cards, dealer_hand)
-  display_hand_filler(spent_cards, "Dealer", player_cards, dealer_cards)
-
+  2.times do
   player_hand << draw_card(spent_cards, player_hand)
-  display_hand_filler(spent_cards, "Player", player_cards, dealer_cards)
-
-  player_hand << draw_card(spent_cards, player_hand)
-  display_hand_filler(spent_cards, "Player", player_cards, dealer_cards)
+  display_hand_filler(spent_cards, YOU, player_cards, dealer_cards)
+  end
 
   display_cards(player_cards, "Your", dealer_hand)
 
   loop do
     answer = valid_input?
-    break if answer == 'stay'
+    if answer == 'stay'
+      prompt "You stayed at #{player_hand.sum}"
+      break
+    end
     player_hand << draw_card(spent_cards, player_hand)
-    display_hand_filler(spent_cards, "Player", player_cards, dealer_cards)
+    display_hand_filler(spent_cards, YOU, player_cards, dealer_cards)
     display_cards(player_cards, 'Your', dealer_hand)
     if bust(player_hand.sum)
-      prompt "Bust!"
+      prompt "Busted at #{player_hand.sum}"
       puts " "
       round = false
       break
@@ -192,26 +207,27 @@ loop do
 
   if round == true
     loop do
-      break if dealer_hand.sum > 17
+      break if dealer_hand.sum >= 17
       dealer_hand << draw_card(spent_cards, dealer_hand)
-      display_hand_filler(spent_cards, "Dealer", player_cards, dealer_cards)
+      display_hand_filler(spent_cards, COMPUTER, player_cards, dealer_cards)
       if bust(dealer_hand.sum)
+        "Dealer hit bust at #{dealer_hand.sum}"
         break
       elsif dealer_hand.sum > player_hand.sum
         break
       end
     end
   end
-
-  final_display_cards(player_cards, dealer_cards)
+  prompt '------------------------------------------------'
+  final_display_cards(player_cards, dealer_cards, player_hand, dealer_hand)
   win_message(player_hand, dealer_hand)
-
+  prompt '------------------------------------------------'
   score_card_update(player_hand, dealer_hand, score_card)
+
   prompt "Player wins:#{score_card[:player_rounds_won]}"
   prompt "Dealer wins:#{score_card[:dealer_rounds_won]}"
-  prompt "Another round? (Y or N)"
-  again = gets.chomp
+
+  break unless end_sequence
   system 'clear'
-  break unless again.downcase.start_with?('y')
-  "Thanks for playing!"
 end
+prompt "Thanks for playing!"
