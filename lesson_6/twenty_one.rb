@@ -1,4 +1,3 @@
-require 'pry'
 DECK = {
   hearts: [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', "Queen", 'King', 'Ace'],
   diamonds: [2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', "Queen", 'King', 'Ace'],
@@ -74,9 +73,11 @@ def display_cards(player_hand, player, dealer_hand)
 end
 
 def final_display_cards(player_cards, dealer_cards, player_hand, dealer_hand)
-  prompt "Player Hand: #{hand_format(player_cards)} for a total of #{player_hand.sum}"
-  
-  prompt "Dealer Hand: #{hand_format(dealer_cards)} for a total of #{dealer_hand.sum}"
+  prompt "Player Hand: #{hand_format(player_cards)}" \
+         " for a total of #{player_hand.sum}"
+
+  prompt "Dealer Hand: #{hand_format(dealer_cards)}" \
+         " for a total of #{dealer_hand.sum}"
 end
 
 # rubocop:disable Metrics/PerceivedComplexity
@@ -139,7 +140,7 @@ def rules
   prompt "Royal cards are worth 10"
   prompt "Ace worth 11 if it doesn't put you over 21, otherwise its worth 1"
   puts " "
-  prompt '------------------------------------------------------------------------------------'
+  prompt '---------------------------------------------------------------------'
   puts " "
 end
 
@@ -173,15 +174,14 @@ loop do
   spent_cards = []
   round = true
 
-
-  2.times do 
-  dealer_hand << draw_card(spent_cards, dealer_hand)
-  display_hand_filler(spent_cards, COMPUTER, player_cards, dealer_cards)
+  2.times do
+    dealer_hand << draw_card(spent_cards, dealer_hand)
+    display_hand_filler(spent_cards, COMPUTER, player_cards, dealer_cards)
   end
 
   2.times do
-  player_hand << draw_card(spent_cards, player_hand)
-  display_hand_filler(spent_cards, YOU, player_cards, dealer_cards)
+    player_hand << draw_card(spent_cards, player_hand)
+    display_hand_filler(spent_cards, YOU, player_cards, dealer_cards)
   end
 
   display_cards(player_cards, "Your", dealer_hand)
@@ -211,7 +211,7 @@ loop do
       dealer_hand << draw_card(spent_cards, dealer_hand)
       display_hand_filler(spent_cards, COMPUTER, player_cards, dealer_cards)
       if bust(dealer_hand.sum)
-        "Dealer hit bust at #{dealer_hand.sum}"
+        prompt "Dealer hit bust at #{dealer_hand.sum}"
         break
       elsif dealer_hand.sum > player_hand.sum
         break
