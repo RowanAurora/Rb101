@@ -9,7 +9,7 @@ ROYAL = 10
 COMPUTER = "Dealer"
 YOU = "Player"
 MAX = 21
-
+DEALER_MAX = 17
 def prompt(string)
   puts "==> " + string
 end
@@ -50,7 +50,7 @@ def draw_card(spent_cards, player_hand)
 end
 
 def bust(total)
-  total > 21
+  total > MAX
 end
 
 def hand_format(player_cards)
@@ -82,9 +82,9 @@ end
 
 # rubocop:disable Metrics/PerceivedComplexity
 def who_won?(player_hand, dealer_hand)
-  if dealer_hand.sum > 21
+  if dealer_hand.sum > MAX
     YOU
-  elsif player_hand.sum > 21
+  elsif player_hand.sum > MAX
     COMPUTER
   elsif (player_hand.sum > dealer_hand.sum) && player_hand.sum <= MAX
     YOU
@@ -207,7 +207,7 @@ loop do
 
   if round == true
     loop do
-      break if dealer_hand.sum >= 17
+      break if dealer_hand.sum >= DEALER_MAX
       dealer_hand << draw_card(spent_cards, dealer_hand)
       display_hand_filler(spent_cards, COMPUTER, player_cards, dealer_cards)
       if bust(dealer_hand.sum)
