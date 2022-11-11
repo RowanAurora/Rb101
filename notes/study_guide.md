@@ -2,15 +2,15 @@
 
 ## Local Variable Scope
 ***
-- `Local variable` `scope` is the concept governing which `variables` are accessible in different contexts.
+- `Local variable` `scope` is the concept governing which `local variables` are accessible in different contexts.
 - `Local variables` initialized in the main `scope` are accessible in the main `scope` and inside `blocks` in the main `scope` 
-- `Local variables` initialized in the main scope are not available within `methods`. `Variables` can be passed to those `methods` during `method invocation`, and they are `assigned` to `parameters`. 
-- `Non mutating` calls within the `method` do not effect the outside `variable`.
-- `Methods` can `MUTATE` `variables` in the `main scope` if they have been passed as `arguments`.
-- `Variables` initialized within a `block` are not accessible within the `main scope`
-- `Variables` initialized in the `main scope` are available and can be effected within the `block`
+- `Local variables` initialized in the main scope are not available within `methods`. Arguments can be passed to those `methods` during `method invocation`.
+- `Non mutating` calls within the `method` do not effect the outside `local variable`.
+- `Methods` can `mutate` `local variable's` value in the `main scope` if they have been passed as `arguments`.
+- Local `variables` initialized within a block are not accessible within the `main scope`
+- Local `variables` initialized in the `outer scope` are available and can be affected within the block
 ***
-##### `Variables` in the `main scope` cannot be effected by `non mutating methods`. Changes within the `method` are not reflected in the `main scope` `variable`
+##### Local `variables` in the `main scope` cannot be affected by `non mutating methods`. Changes within the `method` are not reflected in the `main scope` `variable`
 ```ruby
 def a_method(param)
   param += "world"
@@ -22,7 +22,7 @@ a_method(some_variable)
 p some_variable # ===> 'hello'
 ```
 ***
-##### `Mutating methods` can effect `variables` passed to them.
+##### `Mutating methods` can affect local `variables` values passed to them, through mutation ( note, reassignment is non mutating ).
 ```ruby
 def a_method(param)
   param << " world"
@@ -34,7 +34,7 @@ a_method(some_variable)
 p some_variable # ===> 'hello world'
 ```
 ***
-##### `Variables` initialized in the `main scope` CAN be effected within `blocks` (_a `block` is do..end or {} after a `method invocation`_)
+##### Local `variables` initialized in the `main scope` CAN be affected within `blocks` (_a block is do..end or {} after a `method invocation`_)
 
 ```ruby
 some_variable = 'hello'
@@ -47,7 +47,7 @@ end
 p some_variable # ===> 'hello world'
 ```
 ***
-##### `Variables` initialized inside blocks are not available in the `outer scope`
+##### Local `variables` initialized inside blocks are not available in the `outer scope`
 ```ruby
 loop do
   some_variable = 'hello world'
@@ -72,13 +72,13 @@ Or, the value of an object is passed.
 
 ### Pass by Reference
 
-In `Pass by reference` on the other hand a `reference `to the `object` is passed to the method, meaning both the main scope variable and the local variable in the method point to the same object in memory.
+In `Pass by reference` on the other hand a `reference `to the `object` is passed to the `method`, meaning both the main scope local `variable` and the local variable in the method point to the same object in memory.
 
 Or, a reference to the object is passed.
 
 ## Working with collections
 ***
-Collections are data structures that hold a COLLECTION of elements. The most common are `Arrays`, `Hashes` and `Strings`.
+Collections are data structures that hold a COLLECTION of elements. The most common are `Arrays`, `Hashes` and (Sort of) `Strings`.
 
 ### Arrays
 `Arrays` are _0 indexed_ collections that can contain any object(even other collections). Many objects can have the same value.
@@ -98,15 +98,16 @@ Collections are data structures that hold a COLLECTION of elements. The most com
 - reassignment `hash[:key2] = 'world'`
 - Both `keys` and `values` can be any objects(even other collections), but keys are most often symbols => `:symbol`
 - key value pairs are separated with a rocket hash `=>`
-- Symbols can use a different syntax `symbol:`
+- Symbols can use a different syntax `symbol:` when initializing as keys, but are displayed in the conventional way.
 - `.keys` and `.values` can be used to return an array of either. `.keys` is especially useful for iterating.
 
 ### Strings
+Note: strings are not true collections, they are a single object and cannot contain other objects.
 
-`Strings` are also _0 indexed_ collections, but they contain characters and have restrictions on the elements they can contain. Alphanumeric and punctuation characters as well as number characters.
+`Strings` are also _0 indexed_ collections, but they only contain character.
 
 - `Strings` look like `'some characters'` or `"Some more characters"`
-- Specific characters can be returned using the index (`.slice` method) `some_string = 'hello'  some_string[0] ==> h`
+- Specific characters can be returned using the index (`.slice` method) `some_string = 'hello'  some_string[0] => h`
 
 ## Essential Collection Methods
 ***
@@ -118,33 +119,34 @@ Some of the basic `collection methods` that are essential to know are:
 - `.select`
 
 ### Each
-`#.each` is the basic iterator method. It is functionally equivalent to a loop-counter expression. Iterating through and outputting are its main uses.
+`.each` is the basic iterator method. It is functionally equivalent to a loop-counter expression. Iterating through and outputting are its main uses.
 
 - Always returns the caller
-- Does not consider the `return value` of the `block`
+- Does not consider the `return value` of the block
 
 ### MAP
-`#.map` is the transformation method (made available via the enumerable module). Its purpose it to iterate though a collection and transform the elements according to the block. 
+`.map` is the transformation method (made available via the enumerable module). Its purpose it to iterate though a collection and transform the elements according to the block 
 
-- The `return value` of the `block` is considered and returned.
+- The `return value` of the block is considered and returned.
 - Transforms elements of a collection and returns a new collection.
-- `#.map!` is the destructive version that changes the caller. 
+- `.map!` is the destructive version that changes the caller. 
 
 ### Select
 
-`#.select` Is the selection iterator. It evaluates the truthiness of its `block` and returns elements that evaluate `truthy`. 
+`#.select` Is the selection iterator. It evaluates the truthiness of its block and returns elements that evaluate `truthy`. 
 
-- The `return` value of the `block` is considered and a new collection returned with the elements that evaluate `truthy`.
-- The `block` can be given criteria to evaluate the elements.
+- The `return` value of the block is used to determine if an element will be included in new collection returned by .select. 
+- A return value that evaluates to true will be included
+- A return value that evaluates to false will be excluded
 
 ## Truthyness
 ***
 
 In ruby, everything except for `false` and `nil` are `truthy`. 
-- `False` and `Nil` are the only `falsy` elements
-- `True` and `False` are booleans 
-  - `True` is `truthy`, but not all `truthy` elements are true
-  - `False` is `falsey` but nil is `falsey`, but not `false`.
+- `false` and `nil` are the only `falsy` elements
+- `true` and `false` are booleans 
+  - `true` is `truthy`, but not all `truthy` elements are true
+  - `false` is `falsey` but nil is `falsey`, but not `false`.
 
 ```ruby
 variable = 'hello'
@@ -199,7 +201,7 @@ p b #=> 'hello'
 p a #=> 'wow'
 ```
 
-This can become confusing with collection objects. The collection has an `object id`, and each element also has its own `object id`. Changing an element wont necessarily change the collections Id.
+This can become confusing with collection objects. The collection has an `object id`, and each element also has its own `object id`. Changing an element wont change the collections Id.
 
 Here, `arr` remains pointed at the same space, even when one of its elements is reassigned. 
 
@@ -261,10 +263,9 @@ the block starts where `do` or `{` are, and ends where `end` or `}` is .
 
 ```ruby
 method(argument) do |param|
-  block blocky block
-end
+blockblockyblockend
 
-method(argument) { |param| blocky block }
+method(argument) { |param| blockyblock}
 ```
 The implicit return is the return value of an expression that we don't directly see from a method invocation.
 
@@ -275,9 +276,9 @@ def num
 end
 ```
 
-With a block, the implicit return value is what the block evaluates and returns to the method. 
+With a block the implicit return value is what the block evaluates and returns to the method. 
 
-The implicit return here would be nil for the block. Each doesn't use the return value of the block however.
+The implicit return here would be nil for the block Each doesn't use the return value of the block however.
 ``` ruby
 [1, 2, 3].each do |num|
   puts num
@@ -289,7 +290,7 @@ end
 
 The `Array#sort` method compares compatible objects using the spaceship operator (`<=>`) and orders elements in the `array` based on the return of `<=>`. `Integers` and `floats` are ordered numerically, while `strings` and `symbols` are ordered according to the ascii table.
 
-`.sort` returns a new `array` created by sorting self. A code `block` is optional and can determine how the elements are sorted.
+`.sort` returns a new `array` created by sorting self. A code block is optional and can determine how the elements are sorted.
 ```ruby
 arr = ['a', 'c', 'b']
 arr.sort
@@ -303,7 +304,7 @@ The `<=> method` compares elements returning an `integer ( -1, 0, 1)` depending 
 ***
 
 `Variable` shadowing can occur when a block parameter shares the same name as a local variable.
-The parameter takes precedence in the block, but the local variable is not overwritten in the larger scope.
+The parameter takes precedence in the block but the local variable is not overwritten in the larger scope.
 
 ```ruby
 var = "hello" 
@@ -315,3 +316,9 @@ p var # => 'hello'
 p arr # => 'big'
 ```
   
+
+  Note: establish better language around truthyness
+
+  evaluates as true = expression that evaluates truthy
+  is true = `true`
+  is truthy = anything not `false` or `nil`
