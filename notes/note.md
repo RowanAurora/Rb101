@@ -204,10 +204,14 @@ The output of the code is [1,8] and then on the next line ][1, 8], [2]]. We coul
 # What does the following code output?  Why?
 ```ruby
 string = 'abcdefg'
-5.times { |num| puts num string[-num] = "x" }
+5.times do |num| 
+string[-num] = "x"  
+puts num
+end
 p string
 ```
-The string currently outputs nothingm but throws an error for undefined local variable  for 'str' because str wasnt assigned a value at any point, it doesn't exist as an object and cant be used. is str is replaced with the local variable string, the output would be 
+The string currently outputs nothingm but throws an error for undefined local variable  for 'str' because str wasnt assigned a value at any point, it doesn't exist as an object and cant be used. is str is replaced with the local variable string, the output would be xbcxxxx. The .times method starts by passing 0 up to the caller -1. So the block recievers numbers counting up from 0. 
+
 # problem 4
 # What does the following code output?  Why?
 ```ruby
@@ -219,6 +223,7 @@ hello = "I'm a local variable"
 
 p hello
 ```
+THe code outputs "I'm a local variable". This is because when given a word, ruby first reaches for a local variable of that name, and if not found then it reaches for the method. Keeping names sensical and easy to read is important!
 
 # problem 5
 # What does the following code output?  Why?
@@ -228,8 +233,12 @@ def new_value(array)
 end
 
 array = ['soccer']
+new_value(array)
 p array
 ```
+The code outputs ['soccer']. This is an example for scoping for local variables and mutating vs non mutating methods.
+Despite being passed to the method new_value, the local variable array in the main scope does not get changed. Unless mutated, actions inside the method wont effect the outside local variable. Reassignment (+=) is non mutating.
+
 --------------------------------
 Andrew
 # 1 Describe the code, what is returned from the method separate_name?
@@ -242,6 +251,8 @@ first_name, second_name = separate_name('John Doe')
 p first_name
 p second_name
 ```
+The return from the method separate_name is an array of two objects, `['John', 'Doe']`. The first element is assigned to the local variable `first_name` and the second element to the local variable `second_name`
+
 # 2 Is USER_NAME accessible to the methods scope? If so why?
 ```ruby
 USER_NAME = 'Jeanie'
@@ -250,8 +261,12 @@ def welcome_user
   puts "Welcome #{USER_NAME}!"
 end
 
-welcome_user
+p welcome_user
+
 ```
+The constant USER_NAME is accesable in the welcome_user method because of the scoping rules for constants. They are accessable in blocks and methods and the main scope. The rules for constants vs variables allow for different things to be preformed with constants, and thier use can allow for easier maintenance or editing of code. 
+
+
 # 3 Where is the error and why can't it be printed? Comment the error out and describe what prints
 ```ruby
 first = "This is first!"
@@ -265,8 +280,12 @@ first = "This is first!"
   p second
 end
 p first
-p third
+ # p third
 ```
+# NameError (undefined local variable or method `third' for main:Object)
+The code outputs "This is first" on one line and "this is second' on the next, and does this three times. The error was about scoping rules and that local variables instantiated inside of a block (defined by the do..end or {} after a method call) are not available outside of the block.
+
+
 # 4 Describe what is printed for each of the three puts and why they are different
 ```ruby
 arr = [0, 1, 'a', 'b', 10]
@@ -274,6 +293,9 @@ puts arr[2..-1]
 puts arr[2...-1]
 puts arr[-2]
 ```
+The code prints out, each on thier own line a b 10 a b b. 
+The difference between the first two is the difference of one '.' two describes the range object inclusive of the two ojects surrounding it, and three is for a range object exlusive of the objects defining it. (here the objects defining the range objecty are 2 and -1)
+The final puts method call prints out the return value from the .slice method call on local variable array arr.
 # 5 Describe the code. Does this work without the #to_s method and what is capitalized names with out it?
 ```ruby
 family = {
@@ -284,7 +306,12 @@ family = {
 }
 
 capitalized_names = family.keys.map do |name|
-  name.to_s.capitalize
+  name.capitalize
 end
 p capitalized_names
 ```
+On line 301 the loca variable family is assigned to a hash object with key value pairs of symbols and strings.
+
+on line 308 the local variable capitalized names is assigned to the return value of family.keys.map. Inside the block on line 309, the capitalize mathod is called on each element passed to it and returned. 
+on line 311, the array capitalized_names is printed.
+This words with or without the to_s call on 309 because both strings and symbols have the .capitalize method and case sesnsitivity.

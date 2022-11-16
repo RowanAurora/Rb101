@@ -210,7 +210,7 @@ p hello
 
 problem 5
 
-Why doesn't the code output `["soccer", "baseball"]`? What governing principal is reponsible?
+Why doesn't the code output `["soccer", "baseball"]`? What governing principal is responsible?
 
 ```ruby
 def new_value(array)
