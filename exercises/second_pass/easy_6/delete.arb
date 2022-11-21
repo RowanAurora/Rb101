@@ -1,0 +1,41 @@
+=begin
+P - Understand the Problem
+Problem: Write a method that takes an array of strings, and retursn an array of the same
+string values with the vowels removed
+
+Implicit rules:
+if all vowels string is ""
+Explicit rules:
+- vowels are aeiou
+- the same object
+Input: AN array of strings
+
+
+Output: array of strings with vowels removed
+
+
+E - Examples Test cases
+remove_vowels(%w(abcdefghijklmnopqrstuvwxyz)) == %w(bcdfghjklmnpqrstvwxyz)
+remove_vowels(%w(green YELLOW black white)) == %w(grn YLLW blck wht)
+remove_vowels(%w(ABC AEIOU XYZ)) == ['BC', '', 'XYZ']
+D - Data Structure
+
+A - Algorithm (Fully fleshed out logic of code chunk)
+define remove vowel method to accept 1 array arguments
+Iterate through the array, transforming each element 
+ -transform by removing vowels
+Return transformed array.
+
+C - Code (with intent)
+=end
+
+def remove_vowels(array)
+  array.map! do |word| 
+    word = word.delete("/aeiouAEIOU/")
+  end
+  array
+end
+
+p remove_vowels(%w(abcdefghijklmnopqrstuvwxyz)) == %w(bcdfghjklmnpqrstvwxyz)
+p remove_vowels(%w(green YELLOW black white)) == %w(grn YLLW blck wht)
+p remove_vowels(%w(ABC AEIOU XYZ)) == ['BC', '', 'XYZ']
