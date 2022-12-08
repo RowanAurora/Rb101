@@ -50,7 +50,8 @@ def scrambles(str)
       counter += 1
     end
   end
-  result_arr = result_arr.select { |substr| substr.chars.all? { |char| VOWEL.include?(char)}}.map(&:size).max
+  result_arr = result_arr.select { |substr| substr.chars.all? { |char| VOWEL.include?(char)}}
+  result_arr.map(&:size).max
 end
 
 p scrambles("codewarriors") == 2

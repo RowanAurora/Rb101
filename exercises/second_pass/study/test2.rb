@@ -1,48 +1,26 @@
-=begin
-A child is playing with a ball on the nth floor of a tall h. The height of this floor above ground level, h, is known.
+You are given an array(list) strarr of strings and an integer k.
+ Your task is to return the first longest string consisting of k consecutive strings taken in the array.
+ strarr = ["tree", "foling", "trashy", "blue", "abcdef", "uvwxyz"], k = 2
 
-He drops the ball out of the window. The ball bounces (for example), to two-thirds of its height (a bounce of 0.66).
+Concatenate the consecutive strings of strarr by 2, we get:
 
-His mother looks out of a window 1.5 meters from the ground.
+treefoling   (length 10)  concatenation of strarr[0] and strarr[1]
+folingtrashy ("      12)  concatenation of strarr[1] and strarr[2]
+trashyblue   ("      10)  concatenation of strarr[2] and strarr[3]
+blueabcdef   ("      10)  concatenation of strarr[3] and strarr[4]
+abcdefuvwxyz ("      12)  concatenation of strarr[4] and strarr[5]
 
-How many times will the mother see the ball pass in front of her window (including when it's falling and bouncing?
+Two strings are the longest: "folingtrashy" and "abcdefuvwxyz".
+The first that came is "folingtrashy" so 
+longest_consec(strarr, 2) should return "folingtrashy".
 
-Three conditions must be met for a valid experiment:
+In the same way:
+longest_consec(["zone", "abigail", "theta", "form", "libe", "zas", "theta", "abigail"], 2) --> "abigailtheta"
 
-Float parameter "h" in meters must be greater than 0
-Float parameter "bounce" must be greater than 0 and less than 1
-Float parameter "window" must be less than h.
-If all three conditions above are fulfilled, return a positive integer, otherwise return -1.
+input: array of strings
+output: longest string concatenation of n strings in order
 
-Note:
+add n items at index 0 
+incriment index
+break when 
 
-The ball can only be seen if the height of the rebounding ball is strictly greater than the window parameter.
-
-Examples:
-
-- h = 3, bounce = 0.66, window = 1.5, result is 3
-
-- h = 3, bounce = 1, window = 1.5, result is -1 
-
-(Condition 2) not fulfilled).
-=end
-
-def bouncingBall(h, bounce, window)
-  return -1 if bounce >= 1 
-  return -1 if h < 1 
-  result = []
-  loop do
-    h = (h * bounce).round(2)   
-    break if h < window
-    result << h
-  end
-   p result
-   result.size * 2 + 1
-end
-
-p bouncingBall(3, 0.66, 1.5) #== 3
-p bouncingBall(30, 0.66, 1.5) #== 15
-p bouncingBall(30, 0.75, 1.5) #== 21
-p bouncingBall(30, 0.4, 10) #== 3
-p bouncingBall(40, 1, 10) #== -1
-p bouncingBall(-5, 0.66, 1.5) #== -1

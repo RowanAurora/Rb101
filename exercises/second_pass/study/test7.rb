@@ -35,8 +35,8 @@ def max_sequence(array)
     counter = 1
     loop do
       result_arr << array[index, counter]
-      counter += 1
       break if counter + index >= array.size
+      counter += 1
     end
   end
   result = result_arr.map(&:sum).max
